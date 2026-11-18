@@ -113,6 +113,10 @@ dev = [
     "rich>=14.1.0",
 ]
 
+# relative_files: required by the coverage comment action, which merges .coverage files from the CI matrix
+[tool.coverage.run]
+relative_files = true
+
 [tool.pytest.ini_options]
 testpaths = ["tests", "src"]
 addopts = "--doctest-modules"

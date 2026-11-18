@@ -1,37 +1,153 @@
-name: CI Pipeline
+name: CI
 
 on:
   push:
     branches: [main]
   pull_request:
     branches: [main]
-  schedule:
-    - cron: '0 9 * * *'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
-  quality-checks:
-    name: "Проверки качества"
+  quality:
+    name: "Линтинг и типы"
+    runs-on: ubuntu-latest
+    steps:
+      - name: "⏬ Забрать код"
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # the commit message check needs the history of the PR
+
+      - name: "📦 Установить uv"
+        uses: astral-sh/setup-uv@v7
+        with:
+          enable-cache: true
+
+      - name: "🐍 Установить Python"
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: "📦 Установить зависимости"
+        run: uv sync --locked --extra dev
+
+      - name: "🔍 Линтинг (ruff)"
+        run: uv run make lint
+
+      - name: "🧪 Типы (mypy)"
+        run: uv run make typecheck
+
+      - name: "⚡ Типы (ty)"
+        run: uv run make typecheck-fast
+
+      - name: "📝 Сообщения коммитов (Conventional Commits)"
+        if: github.event_name == 'pull_request'
+        run: >-
+          uvx --from commitizen==4.19.3 cz check
+          --rev-range origin/${{ github.base_ref }}..${{ github.event.pull_request.head.sha }}
+
+  tests:
+    name: "Тесты (Python ${{ matrix.python-version }})"
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.10", "3.11", "3.12", "3.13"]
+    steps:
+      - name: "⏬ Забрать код"
+        uses: actions/checkout@v4
+
+      - name: "📦 Установить uv"
+        uses: astral-sh/setup-uv@v7
+        with:
+          enable-cache: true
+
+      - name: "🐍 Установить Python"
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: "📦 Установить зависимости"
+        run: uv sync --locked --extra dev --python ${{ matrix.python-version }}
+
+      - name: "🚀 Тесты и doctest'ы"
+        run: uv run make test
+        env:
+          # Every matrix leg writes its own file; the `coverage` job merges them.
+          # The ".coverage." prefix is required by `coverage combine`.
+          COVERAGE_FILE: ".coverage.${{ matrix.python-version }}"
+
+      - name: "📤 Сохранить данные покрытия"
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-${{ matrix.python-version }}
+          path: .coverage.${{ matrix.python-version }}
+          include-hidden-files: true  # the file name starts with a dot
+
+  coverage:
+    name: "Покрытие"
+    needs: tests
+    runs-on: ubuntu-latest
+    # Coverage reporting is informational: a hiccup of the GitHub API must not block releases,
+    # which start only after a fully green CI run.
+    continue-on-error: true
+    # Pull requests from forks get a read-only token and can't be commented on.
+    if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository
+    permissions:
+      pull-requests: write  # publish and update the coverage comment on pull requests
+      contents: write       # save the coverage data to the `python-coverage-comment-action-data` branch
+    steps:
+      - name: "⏬ Забрать код"
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - name: "📥 Собрать данные покрытия со всех версий Python"
+        uses: actions/download-artifact@v4
+        with:
+          pattern: coverage-*
+          merge-multiple: true
+
+      # Pinned to a commit: this third-party action gets a token with write permissions.
+      - name: "📊 Отчёт о покрытии: комментарий в PR и бейдж"
+        uses: py-cov-action/python-coverage-comment-action@07249dd712cd2464873eb8a59a24f97fd281e76f # v4.6
+        with:
+          GITHUB_TOKEN: ${{ github.token }}
+          MERGE_COVERAGE_FILES: true
+          MINIMUM_GREEN: 90
+          MINIMUM_ORANGE: 75
+
+  package:
+    name: "Сборка и smoke-тест CLI"
+    needs: [quality, tests]
     runs-on: ubuntu-latest
     steps:
       - name: "⏬ Забрать код"
         uses: actions/checkout@v4
 
+      - name: "📦 Установить uv"
+        uses: astral-sh/setup-uv@v7
+        with:
+          enable-cache: true
+
       - name: "🐍 Установить Python"
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v5
         with:
           python-version: "3.12"
 
-      - name: "📦 Установить все зависимости"
-        run: |
-          pip install -e ".[dev]"
-          # Или если используете requirements.txt:
-          # pip install -r requirements.txt -r requirements-dev.txt
+      - name: "📦 Собрать wheel и sdist"
+        run: uv build
 
-      - name: "🔍 Запустить линтинг"
-        run: make lint
+      - name: "💨 Smoke-тест CLI на установленном wheel"
+        run: bash scripts/cli_smoke_test.sh
 
-      - name: "🚀 Запустить тесты"
-        run: make test
-
-      - name: "📦 Сборка пакета"
-        run: make build
+      - name: "📤 Сохранить сборку"
+        uses: actions/upload-artifact@v4
+        with:
+          name: dist
+          path: dist/
