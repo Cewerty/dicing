@@ -7,7 +7,17 @@ from typing import Literal
 
 from ..._compat import override
 from ...dice import Dice, DicePool
-from ...strategies import DefaultRandomStrategy, DefaultRoll, RandomStrategy, RollStrategy
+from ...strategies import RandomStrategy, RollStrategy
+
+
+def _proxy(die: Dice, rng_strategy: RandomStrategy | None, roll_strategy: RollStrategy | None) -> Dice:
+    """Copy of ``die`` with the given strategies; a strategy that is None is taken from ``die``."""
+    return Dice(
+        die.smallest_side,
+        die.biggest_side,
+        rng_strategy if rng_strategy is not None else die.randomization_strategy,
+        roll_strategy if roll_strategy is not None else die.roll_strategy,
+    )
 
 
 class BaseDiceContextManager(AbstractContextManager[Dice], ABC):
@@ -25,13 +35,14 @@ class BaseDiceContextManager(AbstractContextManager[Dice], ABC):
         Args:
         ----
             initial_dice: The original dice instance to proxy
-            replaced_rng_strategy: Optional RNG strategy to temporarily use
-            replaced_roll_strategy: Optional roll strategy to temporarily use
+            replaced_rng_strategy: Optional RNG strategy to temporarily use (None keeps the die's own)
+            replaced_roll_strategy: Optional roll strategy to temporarily use (None keeps the die's own)
 
         """
         self.initial_dice = initial_dice
-        self.temp_rng_strategy = replaced_rng_strategy if replaced_rng_strategy is not None else DefaultRandomStrategy()
-        self.temp_roll_strategy = replaced_roll_strategy if replaced_roll_strategy is not None else DefaultRoll()
+        # None means "not replaced": the proxy inherits the strategy of the original die
+        self.temp_rng_strategy = replaced_rng_strategy
+        self.temp_roll_strategy = replaced_roll_strategy
         self.proxy_dice: Dice | None = None
 
     @override
@@ -44,12 +55,7 @@ class BaseDiceContextManager(AbstractContextManager[Dice], ABC):
             A proxy dice instance with the temporary strategies applied
 
         """
-        self.proxy_dice = Dice(
-            self.initial_dice.smallest_side,
-            self.initial_dice.biggest_side,
-            self.temp_rng_strategy,
-            self.temp_roll_strategy,
-        )
+        self.proxy_dice = _proxy(self.initial_dice, self.temp_rng_strategy, self.temp_roll_strategy)
         self.on_enter()
         return self.proxy_dice
 
@@ -146,13 +152,14 @@ class BaseDicePoolContextManager(AbstractContextManager[DicePool], ABC):
         Args:
         ----
             initial_pool: The original dice pool instance to proxy
-            replaced_rng_strategy: Optional RNG strategy to temporarily use for all dice
-            replaced_roll_strategy: Optional roll strategy to temporarily use for all dice
+            replaced_rng_strategy: Optional RNG strategy to temporarily use for all dice (None keeps each die's own)
+            replaced_roll_strategy: Optional roll strategy to temporarily use for all dice (None keeps each die's own)
 
         """
         self.initial_pool = initial_pool
-        self.temp_rng_strategy = replaced_rng_strategy if replaced_rng_strategy is not None else DefaultRandomStrategy()
-        self.temp_roll_strategy = replaced_roll_strategy if replaced_roll_strategy is not None else DefaultRoll()
+        # None means "not replaced": the proxy inherits the strategy of the original die
+        self.temp_rng_strategy = replaced_rng_strategy
+        self.temp_roll_strategy = replaced_roll_strategy
         self.proxy_pool: DicePool | None = None
 
     @override
@@ -165,15 +172,7 @@ class BaseDicePoolContextManager(AbstractContextManager[DicePool], ABC):
             A proxy dice pool instance with all dice using temporary strategies
 
         """
-        proxy_dice_list = [
-            Dice(
-                die.smallest_side,
-                die.biggest_side,
-                self.temp_rng_strategy,
-                self.temp_roll_strategy,
-            )
-            for die in self.initial_pool
-        ]
+        proxy_dice_list = [_proxy(die, self.temp_rng_strategy, self.temp_roll_strategy) for die in self.initial_pool]
         self.proxy_pool = DicePool(proxy_dice_list)
         self.on_enter()
         return self.proxy_pool
