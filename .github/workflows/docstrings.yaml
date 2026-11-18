@@ -1,0 +1,56 @@
+name: Docstrings
+
+# Public API coverage: how much of the library's public interface is documented.
+# Private helpers (_name), overloads and package __init__.py files are not counted (see [tool.interrogate]).
+# The style of the docstrings themselves is checked by ruff (rules "D") in the CI workflow.
+on:
+  push:
+    branches: [main]
+    paths: ["src/**", "pyproject.toml", ".github/workflows/docstrings.yaml"]
+  pull_request:
+    branches: [main]
+    paths: ["src/**", "pyproject.toml", ".github/workflows/docstrings.yaml"]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  interrogate:
+    name: "Покрытие docstring'ами публичного API"
+    runs-on: ubuntu-latest
+    env:
+      UV_PYTHON: "3.12"
+    steps:
+      - name: "⏬ Забрать код"
+        uses: actions/checkout@v4
+
+      - name: "📦 Установить uv"
+        uses: astral-sh/setup-uv@v7
+        with:
+          enable-cache: true
+
+      - name: "🐍 Установить Python"
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: "📦 Установить зависимости"
+        run: uv sync --locked --extra docs
+
+      - name: "📖 Покрытие docstring'ами (interrogate)"
+        run: |
+          status=0
+          uv run interrogate src/dicing -v > interrogate.txt || status=$?
+          cat interrogate.txt
+          {
+            echo '### Покрытие docstring'"'"'ами публичного API'
+            echo '```'
+            cat interrogate.txt
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"
+          exit "$status"

@@ -48,6 +48,7 @@ dev = [
 ]
 docs = [
     "sphinx>=8.1",
+    "interrogate>=1.7",
 ]
 
 [project.urls]
@@ -178,6 +179,16 @@ missing-override-decorator = "warn"
 blanket-ignore-comment = "warn"
 unused-ignore-comment = "warn"
 deprecated = "warn"
+
+# Docstring coverage of the PUBLIC API (the style of the docstrings is checked by the ruff "D" rules).
+# Private helpers (_name), overloads and empty package __init__.py files are not part of the API.
+[tool.interrogate]
+ignore-semiprivate = true
+ignore-private = true
+ignore-overloaded-functions = true
+ignore-init-module = true
+fail-under = 100
+verbose = 1
 
 [tool.ty.terminal]
 error-on-warning = true
