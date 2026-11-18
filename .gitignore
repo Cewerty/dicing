@@ -207,3 +207,7 @@ marimo/_lsp/
 __marimo__/
 
 Diced.py
+
+# Personal notes
+ROADMAP.md
+.repomixignore
