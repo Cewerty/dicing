@@ -46,6 +46,9 @@ dev = [
     # ty is pre-1.0: pin exactly, its rules change between releases
     "ty==0.0.106",
 ]
+docs = [
+    "sphinx>=8.1",
+]
 
 [project.urls]
 Homepage = "https://github.com/Cewerty/dicing"

@@ -1,0 +1,68 @@
+name: Docs
+
+# The documentation is built on every pull request (warnings are errors, so broken docstrings are caught
+# before merge) and published to GitHub Pages on every push to main.
+# One-time setup: Settings -> Pages -> Build and deployment -> Source: "GitHub Actions".
+on:
+  push:
+    branches: [main]
+    paths: ["docs/**", "src/**", "pyproject.toml", ".github/workflows/docs.yaml"]
+  pull_request:
+    branches: [main]
+    paths: ["docs/**", "src/**", "pyproject.toml", ".github/workflows/docs.yaml"]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: pages-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    name: "Сборка документации"
+    runs-on: ubuntu-latest
+    env:
+      UV_PYTHON: "3.12"
+    steps:
+      - name: "⏬ Забрать код"
+        uses: actions/checkout@v4
+
+      - name: "📦 Установить uv"
+        uses: astral-sh/setup-uv@v7
+        with:
+          enable-cache: true
+
+      - name: "🐍 Установить Python"
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: "📦 Установить зависимости"
+        run: uv sync --locked --extra docs
+
+      - name: "📚 Собрать Sphinx (предупреждения = ошибки)"
+        run: uv run make docs
+
+      - name: "📤 Подготовить сайт для GitHub Pages"
+        if: github.event_name != 'pull_request'
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: docs/build/html
+
+  deploy:
+    name: "Публикация на GitHub Pages"
+    needs: build
+    if: github.event_name != 'pull_request'
+    runs-on: ubuntu-latest
+    permissions:
+      pages: write      # publish the site
+      id-token: write   # GitHub verifies that the deployment comes from this workflow
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: "🚀 Опубликовать"
+        id: deployment
+        uses: actions/deploy-pages@v4

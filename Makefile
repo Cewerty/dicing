@@ -2,7 +2,7 @@ PROJECT_NAME = dicing
 SRC_DIR = src
 TESTS_DIR = tests
 
-.PHONY: all install-hooks lint format typecheck typecheck-fast test build smoke release-check clean ci
+.PHONY: all install-hooks lint format typecheck typecheck-fast test docs build smoke release-check clean ci
 
 all: install-hooks lint format typecheck test build
 
@@ -30,6 +30,10 @@ typecheck-fast:
 test:
 	@echo "🚀 Запуск тестов..."
 	pytest -v --cov=$(SRC_DIR) --cov-report=term-missing
+
+docs:
+	@echo "📚 Сборка документации (Sphinx, предупреждения считаются ошибками)..."
+	sphinx-build -W --keep-going -b html docs/source docs/build/html
 
 build:
 	@echo "📦 Сборка пакета..."
