@@ -3,7 +3,7 @@ DnD5 dice notation parser module.
 
 This module provides functionality to parse DnD5-style dice notation strings
 (e.g., "2d6+3", "4d6kh3") into structured roll objects compatible with the
-diceroller library. It uses Lark as the parsing engine and integrates seamlessly
+dicing library. It uses Lark as the parsing engine and integrates seamlessly
 with Dice and DicePool classes.
 
 Provides:
@@ -14,7 +14,7 @@ Example:
 -------
     Parsing and rolling a standard DnD5 expression::
 
-        >>> from diceroller.utils.parser import parse_dice_notation
+        >>> from dicing.utils.parser import parse_dice_notation
         >>> result = parse_dice_notation("2d6+3")
         >>> rolls = result.result.roll(modifier=result.modifier)
         >>> len(rolls) == 2
@@ -741,7 +741,7 @@ def parse_dice_notation(notation: str) -> ParsedRoll:
     Parse DnD5-style dice notation into structured roll objects.
 
     Converts human-readable dice notation strings into DicePool objects
-    compatible with the diceroller library. Supports standard DnD5 syntax
+    compatible with the dicing library. Supports standard DnD5 syntax
     including dice rolls, modifiers, and roll modifications.
 
     Args:

@@ -1,7 +1,7 @@
-from src.diceroller import Dice
-from src.diceroller.strategies import DefaultRoll, DisadvantageRoll, AdvantageRoll, MultipleRoll, RollStrategy
+from dicing import Dice
+from dicing.strategies import DefaultRoll, DisadvantageRoll, AdvantageRoll, MultipleRoll, RollStrategy
 import pytest
-from src.diceroller.strategies import DefaultRandomStrategy, PseudoRandomStrategy, RandomStrategy
+from dicing.strategies import DefaultRandomStrategy, PseudoRandomStrategy, RandomStrategy
 
 
 @pytest.fixture()

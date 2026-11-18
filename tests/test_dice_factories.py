@@ -1,6 +1,6 @@
-from src.diceroller.factories import DiceFactory
-from src.diceroller.strategies import PseudoRandomStrategy
-from src.diceroller.dice import Dice
+from dicing.factories import DiceFactory
+from dicing.strategies import PseudoRandomStrategy
+from dicing.dice import Dice
 import pytest
 from typing_extensions import Callable, Tuple
 

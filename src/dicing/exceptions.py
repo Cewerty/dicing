@@ -1,4 +1,4 @@
-"""Custom exceptions for the diceroller library, tailored for TRPG dice mechanics."""
+"""Custom exceptions for the dicing library, tailored for TRPG dice mechanics."""
 
 
 class DiceInvalidSidesError(ValueError):

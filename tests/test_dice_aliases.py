@@ -2,9 +2,9 @@ import pytest
 from functools import partial
 from typing import Callable, Optional
 
-from src.diceroller.aliases import d4, d6, d8, d10, d10_percentages, d12, d20, create_dice
-from src.diceroller.dice import Dice
-from src.diceroller.strategies import (
+from dicing.aliases import d4, d6, d8, d10, d10_percentages, d12, d20, create_dice
+from dicing.dice import Dice
+from dicing.strategies import (
     RollStrategy,
     DefaultRoll,
     MultipleRoll,

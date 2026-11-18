@@ -339,7 +339,7 @@ class Dice(Diceable):
 
         Examples:
         --------
-            >>> from diceroller.aliases import d6, d20
+            >>> from dicing.aliases import d6, d20
             >>> d6_obj = d6()
             >>> d6_obj - 2  # Subtract 2 from a d6 roll
             3
@@ -382,7 +382,7 @@ class Dice(Diceable):
 
         Examples:
         --------
-            >>> from diceroller.aliases import d6, d20
+            >>> from dicing.aliases import d6, d20
             >>> d6_obj = d6()
             >>> 5 - d6_obj  # Subtract a d6 roll from 5
             2
@@ -561,7 +561,7 @@ def adv(dices: Dice | list[Dice]) -> int:
 
     Examples:
     --------
-        >>> from diceroller.aliases import d6, d20
+        >>> from dicing.aliases import d6, d20
         >>> adv(d6())  # Single dice
         4
         >>> adv([d6(), d6(), d6()])  # Multiple dice
@@ -601,7 +601,7 @@ def dis(dices: Dice | list[Dice]) -> int:
 
     Examples:
     --------
-        >>> from diceroller.aliases import d6, d20
+        >>> from dicing.aliases import d6, d20
         >>> dis(d6())  # Single dice
         2
         >>> dis([d6(), d6(), d6()])  # Multiple dice
@@ -730,7 +730,7 @@ def throws(dice: Diceable, count: int = 1, roll_modificator: int = 0) -> Generat
 
     Examples:
     --------
-        >>> from diceroller.aliases import d6, d20
+        >>> from dicing.aliases import d6, d20
         >>> list(throws(d6()))  # Single roll of a d6
         [4]
         >>> list(throws(d6(), count=3))  # Three rolls of a d6
@@ -764,7 +764,7 @@ def get_rolls(d: Diceable) -> list[int]:
 
     Example:
     -------
-        >>> from diceroller.aliases import d6
+        >>> from dicing.aliases import d6
         >>> dice = d6()
         >>> get_rolls(dice)
         [4]
@@ -796,7 +796,7 @@ class DicePool(Diceable):
     -------
         Creating a pool of three d6 dice::
 
-            >>> from diceroller.aliases import d6
+            >>> from dicing.aliases import d6
             >>> pool = DicePool([d6(), d6(), d6()])
             >>> rolls = pool.roll()
             >>> len(rolls) == 3
@@ -824,7 +824,7 @@ class DicePool(Diceable):
 
         Example:
         -------
-            >>> from diceroller.aliases import d6
+            >>> from dicing.aliases import d6
             >>> pool = DicePool(d6())  # Single die pool
             >>> len(pool._dice_list) == 1
             True
@@ -889,7 +889,7 @@ class DicePool(Diceable):
 
         Example:
         -------
-            >>> from diceroller.aliases import d6
+            >>> from dicing.aliases import d6
             >>> pool = DicePool(d6())
             >>> pool.add_dice(d6())
             >>> len(pool._dice_list) == 2
@@ -915,7 +915,7 @@ class DicePool(Diceable):
 
         Example:
         -------
-            >>> from diceroller.aliases import d6
+            >>> from dicing.aliases import d6
             >>> pool = DicePool([d6(), d6()])
             >>> dice = pool._dice_list[0]
             >>> pool.remove_dice(dice)
@@ -939,7 +939,7 @@ class DicePool(Diceable):
 
         Example:
         -------
-            >>> from diceroller.aliases import d6
+            >>> from dicing.aliases import d6
             >>> pool = DicePool([d6(), d6()])
             >>> pool.remove_dice_by_index(0)
             >>> len(pool._dice_list) == 1
@@ -969,7 +969,7 @@ class DicePool(Diceable):
 
         Example:
         -------
-            >>> from diceroller.aliases import d6
+            >>> from dicing.aliases import d6
             >>> pool = DicePool([d6(), d6()])
             >>> pool + 2  # Sum of pool rolls with +2 modifier
             7
@@ -1006,7 +1006,7 @@ class DicePool(Diceable):
 
         Example:
         -------
-            >>> from diceroller.aliases import d6
+            >>> from dicing.aliases import d6
             >>> pool = DicePool([d6(), d6()])
             >>> 2 + pool  # Equivalent to pool + 2
             7
@@ -1037,7 +1037,7 @@ class DicePool(Diceable):
 
         Example:
         -------
-            >>> from diceroller.aliases import d6
+            >>> from dicing.aliases import d6
             >>> pool = DicePool([d6(), d6()])
             >>> pool - 2  # Pool sum with -2 modifier
             3
@@ -1072,7 +1072,7 @@ class DicePool(Diceable):
 
         Example:
         -------
-            >>> from diceroller.aliases import d6
+            >>> from dicing.aliases import d6
             >>> pool = DicePool([d6(), d6()])
             >>> 10 - pool  # 10 minus pool sum
             3
@@ -1105,7 +1105,7 @@ class DicePool(Diceable):
 
         Example:
         -------
-            >>> from diceroller.aliases import d6
+            >>> from dicing.aliases import d6
             >>> pool = DicePool([d6(), d6()])
             >>> pool * 2  # Pool sum multiplied by 2
             10
@@ -1140,7 +1140,7 @@ class DicePool(Diceable):
 
         Example:
         -------
-            >>> from diceroller.aliases import d6
+            >>> from dicing.aliases import d6
             >>> pool = DicePool([d6(), d6()])
             >>> 2 * pool  # Equivalent to pool * 2
             10
@@ -1167,7 +1167,7 @@ class DicePool(Diceable):
 
         Example:
         -------
-            >>> from diceroller.aliases import d6
+            >>> from dicing.aliases import d6
             >>> pool = DicePool([d6(), d6()])
             >>> for die in pool:
             ...     isinstance(die, Dice)
@@ -1187,7 +1187,7 @@ class DicePool(Diceable):
 
         Example:
         -------
-            >>> from diceroller.aliases import d6
+            >>> from dicing.aliases import d6
             >>> pool = DicePool([d6(), d6(), d6()])
             >>> len(pool)
             3
@@ -1216,7 +1216,7 @@ class DicePool(Diceable):
 
         Examples:
         --------
-            >>> from diceroller.aliases import d6, d20
+            >>> from dicing.aliases import d6, d20
             >>> pool = DicePool([d6(), d20(), d6()])
             >>> isinstance(pool[0], Dice)
             True
@@ -1245,7 +1245,7 @@ class DicePool(Diceable):
 
         Example:
         -------
-            >>> from diceroller.aliases import d6
+            >>> from dicing.aliases import d6
             >>> die = d6()
             >>> pool = DicePool([die, d6()])
             >>> die in pool
@@ -1266,7 +1266,7 @@ class DicePool(Diceable):
 
         Example:
         -------
-            >>> from diceroller.aliases import d6
+            >>> from dicing.aliases import d6
             >>> pool = DicePool([d6(), d6()])
             >>> repr(pool)
             'DicePool([Dice(_smallest_side=1, _biggest_side=6, ...), Dice(_smallest_side=1, _biggest_side=6, ...)])'
@@ -1287,7 +1287,7 @@ class DicePool(Diceable):
 
         Example:
         -------
-            >>> from diceroller.aliases import d6, d20
+            >>> from dicing.aliases import d6, d20
             >>> pool = DicePool([d6(), d20(), d6()])
             >>> str(pool)
             'DicePool(3 dice: [1d6, 1d20, 1d6])'
@@ -1330,7 +1330,7 @@ class DicePool(Diceable):
 
         Example:
         -------
-            >>> from diceroller.aliases import d6, d20
+            >>> from dicing.aliases import d6, d20
             >>> pool = DicePool([d6(), d20()])
             >>> pool_dict = pool.to_dict()
             >>> len(pool_dict["dice"]) == 2

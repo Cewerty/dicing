@@ -6,7 +6,7 @@
 # -- Project information -----------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#project-information
 
-project = "diceroller"
+project = "dicing"
 copyright = "2025, Cewerty"
 author = "Cewerty"
 release = "0.2.7"

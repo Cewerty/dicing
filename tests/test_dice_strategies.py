@@ -1,5 +1,5 @@
-from src.diceroller import Dice
-from src.diceroller.strategies import DefaultRoll, DisadvantageRoll, AdvantageRoll, MultipleRoll, RollStrategy
+from dicing import Dice
+from dicing.strategies import DefaultRoll, DisadvantageRoll, AdvantageRoll, MultipleRoll, RollStrategy
 from typing import Hashable
 import pytest
 from typing import Tuple

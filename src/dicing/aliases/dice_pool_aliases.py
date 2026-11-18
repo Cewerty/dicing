@@ -24,7 +24,7 @@ def create_dicepool(dice_list: list[Dice] | Dice) -> DicePool:
 
     Example:
     -------
-        >>> from diceroller.aliases import d6, d20
+        >>> from dicing.aliases import d6, d20
         >>> pool1 = create_dicepool(d6())  # Single die
         >>> len(pool1) == 1
         True

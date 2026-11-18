@@ -1,7 +1,7 @@
 from random import randint
-from src.diceroller.dice import Dice
+from dicing.dice import Dice
 import pytest
-from src.diceroller.dice import adv, dis
+from dicing.dice import adv, dis
 from typing import List, cast
 
 

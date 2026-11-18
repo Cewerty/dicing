@@ -1,29 +1,29 @@
-diceroller package
+dicing package
 ==================
 
 Submodules
 ----------
 
-diceroller.dice module
+dicing.dice module
 ----------------------
 
-.. automodule:: diceroller.dice
+.. automodule:: dicing.dice
    :members:
    :show-inheritance:
    :undoc-members:
 
-diceroller.dice\_factory module
+dicing.dice\_factory module
 -------------------------------
 
-.. automodule:: diceroller.dice_factory
+.. automodule:: dicing.dice_factory
    :members:
    :show-inheritance:
    :undoc-members:
 
-diceroller.dice\_strategies module
+dicing.dice\_strategies module
 ----------------------------------
 
-.. automodule:: diceroller.dice_strategies
+.. automodule:: dicing.dice_strategies
    :members:
    :show-inheritance:
    :undoc-members:
@@ -31,7 +31,7 @@ diceroller.dice\_strategies module
 Module contents
 ---------------
 
-.. automodule:: diceroller
+.. automodule:: dicing
    :members:
    :show-inheritance:
    :undoc-members:
