@@ -11,6 +11,8 @@
 keep/drop, a dice notation parser (`4d6kh3+2`), swappable roll/RNG strategies, seeded reproducible rolls and a CLI.
 Install: `pip install dicing`. The documentation below is in Russian.
 
+📚 **API reference / Справочник API:** <https://cewerty.github.io/dicing/> · 📦 [PyPI](https://pypi.org/project/dicing/) · 📝 [Changelog](CHANGELOG.md)
+
 ---
 
 `dicing` — типизированная библиотека для бросков кубиков в настольных ролевых играх (D&D, Pathfinder и др.):
