@@ -1,16 +1,11 @@
-.. dicing documentation master file, created by
-   sphinx-quickstart on Thu Jul 31 02:58:54 2025.
-   You can adapt this file completely to your liking, but it should at least
-   contain the root `toctree` directive.
-
 dicing documentation
-========================
+====================
 
-Add your content using ``reStructuredText`` syntax. See the
-`reStructuredText <https://www.sphinx-doc.org/en/master/usage/restructuredtext/index.html>`_
-documentation for details.
-
+Typed, extensible dice library for tabletop RPGs: dice pools, keep/drop, advantage/disadvantage,
+a dice notation parser (``4d6kh3+2``) and a command line interface.
 
 .. toctree::
    :maxdepth: 2
    :caption: Contents:
+
+   modules

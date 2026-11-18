@@ -2,9 +2,9 @@ dicing package
 ==============
 
 .. automodule:: dicing
-   :members:
-   :show-inheritance:
-   :undoc-members:
+   :no-members:
+   :no-undoc-members:
+   :no-show-inheritance:
 
 Core: Dice and DicePool
 -----------------------

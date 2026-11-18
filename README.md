@@ -6,6 +6,12 @@
 [![Python 3.10+](https://img.shields.io/badge/python-3.10%2B-blue)](https://www.python.org/)
 [![License: MIT](https://img.shields.io/badge/license-MIT-green)](https://github.com/Cewerty/dicing/blob/main/LICENSE)
 
+**English:** `dicing` is a typed, extensible dice library for tabletop RPGs: dice and dice pools, advantage/disadvantage,
+keep/drop, a dice notation parser (`4d6kh3+2`), swappable roll/RNG strategies, seeded reproducible rolls and a CLI.
+Install: `pip install dicing`. The documentation below is in Russian.
+
+---
+
 `dicing` — типизированная библиотека для бросков кубиков в настольных ролевых играх (D&D, Pathfinder и др.):
 кубики и пулы кубиков, преимущество/помеха, keep/drop, разбор нотации вида `4d6kh3+2`
 и подменяемые стратегии бросков и генерации случайных чисел.
