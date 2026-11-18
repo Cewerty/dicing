@@ -1,37 +1,53 @@
 dicing package
-==================
+==============
 
-Submodules
-----------
+.. automodule:: dicing
+   :members:
+   :show-inheritance:
+   :undoc-members:
 
-dicing.dice module
-----------------------
+Core: Dice and DicePool
+-----------------------
 
 .. automodule:: dicing.dice
    :members:
    :show-inheritance:
    :undoc-members:
 
-dicing.dice\_factory module
--------------------------------
+Strategies
+----------
 
-.. automodule:: dicing.dice_factory
+.. automodule:: dicing.strategies.dice_strategies
    :members:
    :show-inheritance:
    :undoc-members:
 
-dicing.dice\_strategies module
-----------------------------------
+Aliases
+-------
 
-.. automodule:: dicing.dice_strategies
+.. automodule:: dicing.aliases.dice_aliases
    :members:
-   :show-inheritance:
-   :undoc-members:
 
-Module contents
+.. automodule:: dicing.aliases.dice_pool_aliases
+   :members:
+
+Notation parser
 ---------------
 
-.. automodule:: dicing
+.. automodule:: dicing.utils.parser.dice_parser
    :members:
    :show-inheritance:
-   :undoc-members:
+
+Context managers
+----------------
+
+.. automodule:: dicing.utils.context_managers.dice_base
+   :members:
+   :show-inheritance:
+
+Exceptions
+----------
+
+.. automodule:: dicing.exceptions
+   :members:
+   :show-inheritance:

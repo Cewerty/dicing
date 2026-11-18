@@ -1,29 +1,47 @@
 """
-Module containing randomization and dice-rolling strategies for RPG dice systems.
+Strategies of the Strategy pattern (GoF) used by :class:`~dicing.Dice`.
 
-Provides implementations of:
-- Random number generation strategies (cryptographic, pseudo-random, NumPy-based)
-- Dice rolling strategies (standard, advantage, disadvantage, multiple rolls)
-- Optimized multiple roll strategy with instance caching
+A die delegates two independent decisions to interchangeable objects:
 
-Classes:
-    RandomStrategy: Protocol for random number generators
-    DefaultRandomStrategy: Cryptographically strong random numbers
-    PseudoRandomStrategy: Standard pseudo-random generator
-    NumPyStrategy: NumPy-based random generator
-    RollStrategy: Protocol for dice rolling strategies
-    DefaultRoll: Standard single die roll
-    DisadvantageRoll: Roll two dice take lowest
-    AdvantageRoll: Roll two dice take highest
-    MultipleRoll: Roll multiple dice and sum (with instance caching)
+- **where random numbers come from** — :class:`RandomStrategy`:
+  :class:`DefaultRandomStrategy` (cryptographically strong, default),
+  :class:`PseudoRandomStrategy` (fast ``random`` module),
+  :class:`SeededRandomStrategy` (reproducible — for tests, replays and documentation);
+- **how a roll is made** — :class:`RollStrategy`:
+  :class:`DefaultRoll`, :class:`AdvantageRoll`, :class:`DisadvantageRoll`, :class:`MultipleRoll`.
+
+Both are ``typing.Protocol`` s, so any object with a matching method works — no inheritance needed.
 
 Example:
-    >>> from dice_strategies import DefaultRandomStrategy, DefaultRoll
-    >>> from dice import Dice
-    >>> die = Dice(1, 20, DefaultRandomStrategy(), DefaultRoll())
-    >>> result = die.roll()
-    >>> 1 <= result <= 20
-    True
+-------
+    The same ``Dice`` class, without any changes, works with every source of randomness::
+
+        >>> from dicing import Dice, DefaultRandomStrategy, PseudoRandomStrategy, SeededRandomStrategy
+        >>> 1 <= Dice(1, 20, DefaultRandomStrategy()).roll() <= 20  # secure, unpredictable
+        True
+        >>> 1 <= Dice(1, 20, PseudoRandomStrategy()).roll() <= 20  # fast, unpredictable
+        True
+        >>> Dice(1, 20, SeededRandomStrategy(7)).roll()  # reproducible
+        11
+        >>> Dice(1, 20, SeededRandomStrategy(7)).roll()  # same seed -> same roll
+        11
+
+    A user-defined strategy plugs in the same way, e.g. a loaded die for a test::
+
+        >>> class AlwaysMax:
+        ...     def randint(self, smallest: int, biggest: int) -> int:
+        ...         return biggest
+        >>> Dice(1, 20, AlwaysMax()).roll()
+        20
+
+    The roll mechanics are swapped independently of the randomness::
+
+        >>> from dicing import AdvantageRoll, DisadvantageRoll
+        >>> d20 = Dice(1, 20, SeededRandomStrategy(7))
+        >>> d20.roll(inserted_roll_strategy=AdvantageRoll())  # best of two
+        11
+        >>> d20.roll(inserted_roll_strategy=DisadvantageRoll())  # worst of two
+        2
 
 """
 
@@ -33,6 +51,8 @@ import random
 from secrets import SystemRandom
 from typing import TYPE_CHECKING, ClassVar, Protocol
 from weakref import WeakValueDictionary
+
+from .._compat import override
 
 if TYPE_CHECKING:
     from ..dice import Dice
@@ -96,6 +116,40 @@ class PseudoRandomStrategy:
 
         """
         return random.randint(smallest, biggest)  # noqa: S311
+
+
+class SeededRandomStrategy:
+    """
+    Reproducible pseudo-random strategy: the same seed gives the same sequence of numbers.
+
+    Each instance owns its own generator, so it doesn't affect (and isn't affected by)
+    the global ``random`` state. Share one instance between dice to make a whole pool
+    or parsed expression reproducible. Not suitable for cryptographic purposes.
+    """
+
+    def __init__(self, seed: int | str | bytes) -> None:
+        """
+        Initialize the strategy with a private generator.
+
+        Args:
+            seed: Seed of the generator
+
+        """
+        self._random = random.Random(seed)  # noqa: S311
+
+    def randint(self, smallest: int, biggest: int) -> int:
+        """
+        Return the next number of the seeded sequence.
+
+        Args:
+            smallest: Lower bound (inclusive)
+            biggest: Upper bound (inclusive)
+
+        Returns:
+            Integer in range [smallest, biggest]
+
+        """
+        return self._random.randint(smallest, biggest)
 
 
 class RollStrategy(Protocol):
@@ -180,6 +234,7 @@ class MultipleRoll:
     _instances: ClassVar[WeakValueDictionary[int, MultipleRoll]] = WeakValueDictionary()
     _times: int
 
+    @override
     def __hash__(self) -> int:
         """
         Generate a hash value based on the number of rolls.
@@ -193,6 +248,7 @@ class MultipleRoll:
         """
         return hash(self.times)
 
+    @override
     def __eq__(self, other: object) -> bool:
         """
         Compare instances for equality based on roll count.
@@ -269,11 +325,10 @@ class MultipleRoll:
             Sum of all dice rolls + modifier
 
         Example:
-            >>> strategy = MultipleRoll(3)
-            >>> d6 = Dice(1, 6)
-            >>> result = strategy.roll(d6)
-            >>> 3 <= result <= 18
-            True
+            >>> from dicing import Dice, SeededRandomStrategy
+            >>> d6 = Dice(1, 6, SeededRandomStrategy(42))
+            >>> MultipleRoll(3).roll(d6)  # the same die rolled 3 times and summed, like 3d6
+            8
 
         """
         return (

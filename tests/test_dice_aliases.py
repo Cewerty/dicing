@@ -47,7 +47,7 @@ def test_all_dice_partials(
     roll_strategy: Optional[RollStrategy],
     random_strategy: Optional[RandomStrategy],
 ) -> None:
-    die = dice_factory(_random_strategy=random_strategy, _roll_strategy=roll_strategy)
+    die = dice_factory(random_strategy=random_strategy, roll_strategy=roll_strategy)
 
     assert die.smallest_side == expected_min
     assert die.biggest_side == expected_max
@@ -86,8 +86,8 @@ def test_create_dice(
     die: Dice = create_dice(
         smallest_side,
         biggest_side,
-        _random_strategy=random_strategy,
-        _roll_strategy=roll_strategy,
+        random_strategy=random_strategy,
+        roll_strategy=roll_strategy,
     )
 
     assert die.smallest_side == smallest_side

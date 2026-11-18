@@ -9,7 +9,9 @@
 project = "dicing"
 copyright = "2025, Cewerty"
 author = "Cewerty"
-release = "0.2.7"
+from importlib.metadata import version as _version
+
+release = _version("dicing")
 
 # -- General configuration ---------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration

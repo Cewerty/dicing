@@ -6,3 +6,4 @@ from .dice_strategies import MultipleRoll as MultipleRoll
 from .dice_strategies import PseudoRandomStrategy as PseudoRandomStrategy
 from .dice_strategies import RandomStrategy as RandomStrategy
 from .dice_strategies import RollStrategy as RollStrategy
+from .dice_strategies import SeededRandomStrategy as SeededRandomStrategy

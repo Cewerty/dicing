@@ -5,6 +5,7 @@ from contextlib import AbstractContextManager
 from types import TracebackType
 from typing import Literal
 
+from ..._compat import override
 from ...dice import Dice, DicePool
 from ...strategies import DefaultRandomStrategy, DefaultRoll, RandomStrategy, RollStrategy
 
@@ -33,6 +34,7 @@ class BaseDiceContextManager(AbstractContextManager[Dice], ABC):
         self.temp_roll_strategy = replaced_roll_strategy if replaced_roll_strategy is not None else DefaultRoll()
         self.proxy_dice: Dice | None = None
 
+    @override
     def __enter__(self) -> Dice:
         """
         Enter the context and create a proxy dice with temporary strategies.
@@ -51,6 +53,7 @@ class BaseDiceContextManager(AbstractContextManager[Dice], ABC):
         self.on_enter()
         return self.proxy_dice
 
+    @override
     def __exit__(
         self,
         exc_type: type[BaseException] | None,
@@ -103,10 +106,12 @@ class BaseDiceContextManager(AbstractContextManager[Dice], ABC):
 class DiceContext(BaseDiceContextManager):
     """Simple dice context manager with no additional behavior."""
 
+    @override
     def on_enter(self) -> None:
         """No-op implementation for context entry."""
         pass
 
+    @override
     def on_exit(
         self,
         exc_type: type[BaseException] | None,
@@ -150,6 +155,7 @@ class BaseDicePoolContextManager(AbstractContextManager[DicePool], ABC):
         self.temp_roll_strategy = replaced_roll_strategy if replaced_roll_strategy is not None else DefaultRoll()
         self.proxy_pool: DicePool | None = None
 
+    @override
     def __enter__(self) -> DicePool:
         """
         Enter the context and create a proxy dice pool with temporary strategies.
@@ -172,6 +178,7 @@ class BaseDicePoolContextManager(AbstractContextManager[DicePool], ABC):
         self.on_enter()
         return self.proxy_pool
 
+    @override
     def __exit__(
         self,
         exc_type: type[BaseException] | None,
@@ -224,10 +231,12 @@ class BaseDicePoolContextManager(AbstractContextManager[DicePool], ABC):
 class DicePoolContext(BaseDicePoolContextManager):
     """Simple dice pool context manager with no additional behavior."""
 
+    @override
     def on_enter(self) -> None:
         """No-op implementation for context entry."""
         pass
 
+    @override
     def on_exit(
         self,
         exc_type: type[BaseException] | None,

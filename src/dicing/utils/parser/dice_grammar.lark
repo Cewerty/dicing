@@ -1,23 +1,26 @@
-    %import common.INT
-    %import common.WS
-    %ignore WS
+%import common.INT
+%import common.WS
+%ignore WS
 
-    start: expr
+start: expr
 
-    ?expr: term (operator term)*
+?expr: term (operator term)*
 
-    operator: "+" -> add
-            | "-" -> sub
+operator: "+" -> add
+        | "-" -> sub
 
-    ?term: dice_expr
-         | INT -> modifier
+?term: dice_expr
+     | INT -> modifier
 
-    ?dice_expr: count? "d" sides roll_modifier*
+// No "?" here: with "?" Lark inlines the rule when it has a single child,
+// so "d20" would reach the transformer as a bare `sides` tree instead of `dice_expr`.
+dice_expr: [count] "d" sides roll_modifier*
 
-    count: INT
-    sides: INT
+count: INT
+sides: INT
 
-    roll_modifier: "kh" INT? -> keep_highest
-                 | "kl" INT? -> keep_lowest
-                 | "dh" INT? -> drop_highest
-                 | "dl" INT? -> drop_lowest
+// [INT] (not INT?) gives the transformer an explicit None when the amount is omitted: "2d20kh" == "2d20kh1".
+roll_modifier: "kh" [INT] -> keep_highest
+             | "kl" [INT] -> keep_lowest
+             | "dh" [INT] -> drop_highest
+             | "dl" [INT] -> drop_lowest

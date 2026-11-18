@@ -3,9 +3,9 @@
 
 class DiceInvalidSidesError(ValueError):
     """
-    Raised when dice sides are invalid (e.g., negative or min >= max).
+    Raised when dice sides are invalid (min >= max).
 
-    In TRPGs, dice must have positive sides with min < max, like a real d6 (1-6).
+    Sides may be negative (e.g. Fate dice with faces -1..1), but min must be less than max.
 
     """
 

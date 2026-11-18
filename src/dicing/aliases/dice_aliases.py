@@ -10,8 +10,8 @@ def create_dice(
     smallest_side: int = 1,
     biggest_side: int = 4,
     *,
-    _random_strategy: RandomStrategy | None = None,
-    _roll_strategy: RollStrategy | None = None,
+    random_strategy: RandomStrategy | None = None,
+    roll_strategy: RollStrategy | None = None,
 ) -> Dice:
     """
     Create a single die with specified parameters.
@@ -28,11 +28,11 @@ def create_dice(
         Configured Dice instance
 
     """
-    if _random_strategy is None:
-        _random_strategy = DefaultRandomStrategy()
-    if _roll_strategy is None:
-        _roll_strategy = DefaultRoll()
-    return Dice(smallest_side, biggest_side, _random_strategy, _roll_strategy)
+    if random_strategy is None:
+        random_strategy = DefaultRandomStrategy()
+    if roll_strategy is None:
+        roll_strategy = DefaultRoll()
+    return Dice(smallest_side, biggest_side, random_strategy, roll_strategy)
 
 
 d4 = partial(create_dice, 1, 4)
