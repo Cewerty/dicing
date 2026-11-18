@@ -63,3 +63,14 @@ class DiceInvalidAmountError(ValueError):
     """
 
     pass
+
+
+class DiceCopyError(TypeError):
+    """
+    Raised when ``copy.deepcopy`` of a die fails because one of its strategies can't be copied.
+
+    A deep copy must not share state with the original: silently returning the same die would
+    make two "independent" dice consume one random generator.
+    """
+
+    pass

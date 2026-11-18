@@ -33,6 +33,7 @@ from typing import Final, overload
 
 from ._compat import override
 from .exceptions import (
+    DiceCopyError,
     DiceInvalidAmountError,
     DiceInvalidSidesError,
     DiceOperationTypeError,
@@ -398,17 +399,18 @@ class Dice(Diceable):
         -------
             Dice: New Dice instance with copied strategies
 
-        Note:
-        ----
-            If strategy copying fails, returns the original instance
+        Raises:
+        ------
+            DiceCopyError: If a strategy can't be deep-copied. Returning ``self`` instead would
+                silently share the strategy (and its state) between the "copy" and the original.
 
         """
         try:
             new_random_strategy = deepcopy(self._randomization_strategy, memo)
             new_roll_strategy = deepcopy(self._roll_strategy, memo)
-            return replace(self, _randomization_strategy=new_random_strategy, _roll_strategy=new_roll_strategy)
-        except Exception:
-            return self
+        except Exception as error:
+            raise DiceCopyError(f"Cannot deep-copy the strategies of {self!r}: {error}") from error
+        return replace(self, _randomization_strategy=new_random_strategy, _roll_strategy=new_roll_strategy)
 
     def __mul__(self, other: int | Diceable) -> int:
         """
@@ -616,9 +618,7 @@ def _to_dice_list(dices: Diceable | list[Dice]) -> list[Dice]:
         for item in dices:
             flat.extend(_to_dice_list(item))
         return flat
-    if not isinstance(dices, list):
-        raise InvalidDiceInputError("Input must be a Dice, DicePool or list of Dice.")
-    return dices
+    raise InvalidDiceInputError("Input must be a Dice, DicePool or list of Dice.")
 
 
 def _validate_keep(keep: int, available: int) -> None:

@@ -9,6 +9,7 @@ tests fails, the message points at the broken operator instead of a wrong total 
 from __future__ import annotations
 
 import operator
+from copy import deepcopy
 from collections.abc import Callable
 from typing import Any, TypeAlias
 
@@ -18,12 +19,14 @@ from hypothesis import strategies as st
 
 from dicing import (
     Dice,
+    DiceCopyError,
     DiceInvalidAmountError,
     DiceOperationTypeError,
     DicePool,
     InvalidDiceError,
     InvalidDiceInputError,
     NegativeThrowCountError,
+    SeededRandomStrategy,
     adv,
     dh,
     dis,
@@ -193,3 +196,37 @@ def test_pool_check_success_compares_the_sum(pool: DicePool, delta: int) -> None
     """A pool succeeds when its sum reaches the target."""
     target = value(pool) + delta
     assert pool.check_success(target) is (value(pool) >= target)
+
+
+# --- deepcopy ----------------------------------------------------------------------------------
+
+
+class UncopyableRandom:
+    """Random strategy that refuses to be deep-copied (e.g. holds a lock or an open resource)."""
+
+    def randint(self, smallest: int, biggest: int) -> int:
+        """Return the smallest side."""
+        return smallest
+
+    def __deepcopy__(self, memo: dict[int, object]) -> UncopyableRandom:
+        """Fail like an object with a lock inside would."""
+        raise TypeError("cannot copy this strategy")
+
+
+def test_deepcopy_gives_an_independent_die() -> None:
+    """A deep copy has its own strategies: rolling it doesn't advance the original's generator."""
+    original = Dice(1, 1000, SeededRandomStrategy(1))
+    twin = Dice(1, 1000, SeededRandomStrategy(1))
+    clone = deepcopy(original)
+    assert clone is not original
+    assert clone.randomization_strategy is not original.randomization_strategy
+    clone.roll()
+    assert original.roll() == twin.roll()
+
+
+def test_deepcopy_with_uncopyable_strategy_fails_loudly() -> None:
+    """No silent fallback to the same object: the error says what failed and keeps the cause."""
+    die = Dice(1, 6, UncopyableRandom())
+    with pytest.raises(DiceCopyError, match="Cannot deep-copy") as error:
+        deepcopy(die)
+    assert isinstance(error.value.__cause__, TypeError)

@@ -11,6 +11,7 @@ from importlib.metadata import PackageNotFoundError, version
 from .aliases import create_dice, create_dicepool, d4, d6, d8, d10, d10_percentages, d12, d20
 from .dice import Dice, Diceable, DicePool, adv, dh, dis, dl, get_rolls, kh, kl, throws
 from .exceptions import (
+    DiceCopyError,
     DiceInvalidAmountError,
     DiceInvalidSidesError,
     DiceOperationTypeError,
@@ -43,6 +44,7 @@ __all__ = [
     "DefaultRoll",
     "Dice",
     "DiceContext",
+    "DiceCopyError",
     "DiceGroup",
     "DiceInvalidAmountError",
     "DiceInvalidSidesError",
