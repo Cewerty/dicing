@@ -140,6 +140,14 @@ dev = [
 [tool.coverage.run]
 relative_files = true
 
+# Only lines that can never run by construction; real untested code must stay visible.
+[tool.coverage.report]
+exclude_also = [
+    "@abstractmethod",
+    "if TYPE_CHECKING:",
+    '^\s*\.\.\.$',
+]
+
 [tool.pytest.ini_options]
 testpaths = ["tests", "src"]
 addopts = "--doctest-modules"
