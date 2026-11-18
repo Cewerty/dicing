@@ -16,6 +16,7 @@ pre-commit install   # ставит и pre-commit-хуки (ruff, ty), и commit
 | `make typecheck` | mypy — строгая проверка типов, её запускает CI |
 | `make test` | pytest + doctest'ы + покрытие |
 | `make docs` | собрать документацию Sphinx (`uv sync --extra docs`), предупреждения считаются ошибками |
+| `make docstrings` | покрытие docstring'ами публичного API (interrogate, требуется 100%) |
 | `make smoke` | собрать wheel и проверить CLI на установленном пакете |
 | `make release-check` | проверить историю релизов и показать, какой будет следующая версия |
 

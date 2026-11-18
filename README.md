@@ -238,6 +238,8 @@ CI (GitHub Actions) на каждый push и pull request:
 - **тесты** на Python 3.10, 3.11, 3.12 и 3.13; покрытие со всех версий объединяется ([python-coverage-comment-action](https://github.com/py-cov-action/python-coverage-comment-action)): оно показывается бейджем выше и комментарием в каждом pull request, внешние сервисы и токены не нужны;
 - **документация** — Sphinx собирается на каждый pull request (предупреждения = ошибки) и публикуется на
   [GitHub Pages](https://cewerty.github.io/dicing/) после push в `main`;
+- **docstring'и** — отдельный workflow считает покрытие docstring'ами публичного API
+  ([interrogate](https://github.com/econchick/interrogate), сейчас 100%), стиль проверяют правила `D` в ruff;
 - **сборка и smoke-тест** — wheel ставится в чистое окружение, и CLI запускается так, как его запустит
   пользователь (`scripts/cli_smoke_test.sh`). Это ловит ошибки упаковки, которые не видны юнит-тестам:
   например, если в wheel не попала грамматика `dice_grammar.lark` или точка входа `dicing`.
