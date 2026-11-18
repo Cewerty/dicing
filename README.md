@@ -1,8 +1,8 @@
 # dicing — Python-библиотека кубиков для настольных RPG
 
 [![CI](https://github.com/Cewerty/dicing/actions/workflows/ci.yaml/badge.svg)](https://github.com/Cewerty/dicing/actions/workflows/ci.yaml)
-[![Coverage](https://raw.githubusercontent.com/Cewerty/dicing/python-coverage-comment-action-data/badge.svg)](https://github.com/Cewerty/dicing/tree/python-coverage-comment-action-data)
-[![PyPI](https://img.shields.io/pypi/v/dicing)](https://pypi.org/project/dicing/)
+[![Coverage](https://raw.githubusercontent.com/Cewerty/dicing/python-coverage-comment-action-data/badge.svg?v=2)](https://github.com/Cewerty/dicing/tree/python-coverage-comment-action-data)
+[![PyPI](https://img.shields.io/pypi/v/dicing?label=PyPI)](https://pypi.org/project/dicing/)
 [![Docs](https://img.shields.io/badge/docs-GitHub%20Pages-blue)](https://cewerty.github.io/dicing/)
 [![Python 3.10+](https://img.shields.io/badge/python-3.10%2B-blue)](https://www.python.org/)
 [![License: MIT](https://img.shields.io/badge/license-MIT-green)](https://github.com/Cewerty/dicing/blob/main/LICENSE)
