@@ -26,6 +26,8 @@ dev = [
     "uv>=0.8.14",
     "pytest-cov>=7.0.0",
     "hypothesis>=6.100",
+    # ty is pre-1.0: pin exactly, its rules change between releases
+    "ty==0.0.106",
 ]
 
 [project.scripts]
@@ -115,3 +117,29 @@ dev = [
 testpaths = ["tests", "src"]
 addopts = "--doctest-modules"
 doctest_optionflags = ["NORMALIZE_WHITESPACE", "ELLIPSIS"]
+
+[tool.ty.rules]
+# отдельные правила: "ignore" | "warn" | "error"
+possibly-unresolved-reference = "error"
+# Защита от утечки Any и неполных аннотаций
+unsound-assignment = "error"
+unsound-return = "error"
+unsound-yield = "error"
+missing-type-argument = "error"
+disjoint-cast = "error"
+
+# Защита от логических ошибок и багов в рантайме
+unused-awaitable = "error"
+truthiness-test-of-none-union = "warn"
+truthiness-test-of-callable = "error"
+truthiness-test-of-iterable = "error"
+possibly-missing-attribute = "error"
+
+# Чистота кодовой базы и архитектура
+missing-override-decorator = "warn"
+blanket-ignore-comment = "warn"
+unused-ignore-comment = "warn"
+deprecated = "warn"
+
+[tool.ty.terminal]
+error-on-warning = true
