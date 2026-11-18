@@ -14,14 +14,14 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  quality:
-    name: "Линтинг и типы"
+  lint:
+    name: "Форматирование и линтинг"
     runs-on: ubuntu-latest
+    env:
+      UV_PYTHON: "3.12"
     steps:
       - name: "⏬ Забрать код"
         uses: actions/checkout@v4
-        with:
-          fetch-depth: 0  # the commit message check needs the history of the PR
 
       - name: "📦 Установить uv"
         uses: astral-sh/setup-uv@v7
@@ -36,8 +36,33 @@ jobs:
       - name: "📦 Установить зависимости"
         run: uv sync --locked --extra dev
 
-      - name: "🔍 Линтинг (ruff)"
+      - name: "🎨 Проверка форматирования (ruff format)"
+        run: uv run ruff format --check src tests
+
+      - name: "🔍 Линтинг (ruff check)"
         run: uv run make lint
+
+  typecheck:
+    name: "Проверка типов"
+    runs-on: ubuntu-latest
+    env:
+      UV_PYTHON: "3.12"
+    steps:
+      - name: "⏬ Забрать код"
+        uses: actions/checkout@v4
+
+      - name: "📦 Установить uv"
+        uses: astral-sh/setup-uv@v7
+        with:
+          enable-cache: true
+
+      - name: "🐍 Установить Python"
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: "📦 Установить зависимости"
+        run: uv sync --locked --extra dev
 
       - name: "🧪 Типы (mypy)"
         run: uv run make typecheck
@@ -45,8 +70,20 @@ jobs:
       - name: "⚡ Типы (ty)"
         run: uv run make typecheck-fast
 
-      - name: "📝 Сообщения коммитов (Conventional Commits)"
-        if: github.event_name == 'pull_request'
+  commits:
+    name: "Сообщения коммитов"
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    steps:
+      - name: "⏬ Забрать код"
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # the commit message check needs the history of the PR
+
+      - name: "📦 Установить uv"
+        uses: astral-sh/setup-uv@v7
+
+      - name: "📝 Conventional Commits"
         run: >-
           uvx --from commitizen==4.19.3 cz check
           --rev-range origin/${{ github.base_ref }}..${{ github.event.pull_request.head.sha }}
@@ -54,6 +91,9 @@ jobs:
   tests:
     name: "Тесты (Python ${{ matrix.python-version }})"
     runs-on: ubuntu-latest
+    env:
+      # .python-version pins 3.12: without this `uv run` would recreate the venv on 3.12 without dev extras
+      UV_PYTHON: ${{ matrix.python-version }}
     strategy:
       fail-fast: false
       matrix:
@@ -73,7 +113,7 @@ jobs:
           python-version: ${{ matrix.python-version }}
 
       - name: "📦 Установить зависимости"
-        run: uv sync --locked --extra dev --python ${{ matrix.python-version }}
+        run: uv sync --locked --extra dev
 
       - name: "🚀 Тесты и doctest'ы"
         run: uv run make test
@@ -124,7 +164,7 @@ jobs:
 
   package:
     name: "Сборка и smoke-тест CLI"
-    needs: [quality, tests]
+    needs: [lint, typecheck, tests]
     runs-on: ubuntu-latest
     steps:
       - name: "⏬ Забрать код"
