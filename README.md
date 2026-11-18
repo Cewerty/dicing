@@ -3,6 +3,7 @@
 [![CI](https://github.com/Cewerty/dicing/actions/workflows/ci.yaml/badge.svg)](https://github.com/Cewerty/dicing/actions/workflows/ci.yaml)
 [![Coverage](https://raw.githubusercontent.com/Cewerty/dicing/python-coverage-comment-action-data/badge.svg)](https://github.com/Cewerty/dicing/tree/python-coverage-comment-action-data)
 [![PyPI](https://img.shields.io/pypi/v/dicing)](https://pypi.org/project/dicing/)
+[![Docs](https://img.shields.io/badge/docs-GitHub%20Pages-blue)](https://cewerty.github.io/dicing/)
 [![Python 3.10+](https://img.shields.io/badge/python-3.10%2B-blue)](https://www.python.org/)
 [![License: MIT](https://img.shields.io/badge/license-MIT-green)](https://github.com/Cewerty/dicing/blob/main/LICENSE)
 
@@ -223,6 +224,7 @@ make typecheck-fast  # ty: быстрая проверка типов (мень�
 make typecheck   # mypy: строгая проверка типов, её запускает CI
 make test        # pytest + doctest + coverage
 make smoke       # собрать wheel и проверить CLI на установленном пакете
+make docs        # документация Sphinx (uv sync --extra docs): https://cewerty.github.io/dicing/
 ```
 
 Правила оформления коммитов и устройство релизов — в
@@ -232,6 +234,8 @@ CI (GitHub Actions) на каждый push и pull request:
 
 - **линтинг и типы** — ruff, mypy и ty;
 - **тесты** на Python 3.10, 3.11, 3.12 и 3.13; покрытие со всех версий объединяется ([python-coverage-comment-action](https://github.com/py-cov-action/python-coverage-comment-action)): оно показывается бейджем выше и комментарием в каждом pull request, внешние сервисы и токены не нужны;
+- **документация** — Sphinx собирается на каждый pull request (предупреждения = ошибки) и публикуется на
+  [GitHub Pages](https://cewerty.github.io/dicing/) после push в `main`;
 - **сборка и smoke-тест** — wheel ставится в чистое окружение, и CLI запускается так, как его запустит
   пользователь (`scripts/cli_smoke_test.sh`). Это ловит ошибки упаковки, которые не видны юнит-тестам:
   например, если в wheel не попала грамматика `dice_grammar.lark` или точка входа `dicing`.
