@@ -1,3 +1,6 @@
+# `pre-commit install` installs both the pre-commit hooks and the commit-msg hook (commitizen).
+default_install_hook_types: [pre-commit, commit-msg]
+
 repos:
   - repo: https://github.com/pre-commit/pre-commit-hooks
     rev: v4.5.0
@@ -30,3 +33,10 @@ repos:
         language: system
         types: [python]
         pass_filenames: false
+
+  # Conventional Commits check of the commit message; see CONTRIBUTING.md
+  - repo: https://github.com/commitizen-tools/commitizen
+    rev: v4.19.3
+    hooks:
+      - id: commitizen
+        stages: [commit-msg]
