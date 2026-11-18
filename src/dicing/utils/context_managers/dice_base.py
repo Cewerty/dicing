@@ -1,4 +1,21 @@
-"""Base module for dice roller context managers."""
+"""
+Context managers that temporarily roll a die (or a pool) with other strategies.
+
+The context yields a **copy** of the die: the original is never changed. Only the strategies
+that are passed are replaced, the others are taken from the original die, so a seeded die
+stays reproducible when only its roll strategy is replaced:
+
+>>> from dicing import AdvantageRoll, Dice, DiceContext, SeededRandomStrategy
+>>> d20 = Dice(1, 20, SeededRandomStrategy(7))
+>>> context = DiceContext(d20, replaced_roll_strategy=AdvantageRoll())
+>>> with context as lucky_d20:
+...     [lucky_d20.roll() for _ in range(3)]  # with advantage, same numbers on every run
+[11, 13, 18]
+>>> type(d20.roll_strategy).__name__  # the original die still rolls normally
+'DefaultRoll'
+>>> context.proxy_dice is None  # the copy is released on exit
+True
+"""
 
 from abc import ABC, abstractmethod
 from contextlib import AbstractContextManager

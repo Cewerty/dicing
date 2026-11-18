@@ -139,7 +139,8 @@ DicePool([d6(), d6()]) * 3  # сумма броска пула, умноженн
 ```python
 from dicing import AdvantageRoll, DiceContext, PseudoRandomStrategy, d20
 
-# Временно бросать d20 с преимуществом
+# Временно бросать d20 с преимуществом: контекст выдаёт копию кубика,
+# исходный не меняется, а незаданная стратегия (здесь — генератор) берётся от исходного
 with DiceContext(d20(), replaced_roll_strategy=AdvantageRoll()) as lucky_d20:
     lucky_d20.roll()
 
