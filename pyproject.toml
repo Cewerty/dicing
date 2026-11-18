@@ -6,7 +6,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "dicing"
-version = "0.3.3"
+version = "0.4.0"
 description = "Typed, extensible dice library for tabletop RPGs: dice pools, keep/drop, advantage and a dice notation parser (4d6kh3+2) with a CLI"
 readme = "README.md"
 requires-python = ">=3.10"
